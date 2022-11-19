@@ -1,6 +1,6 @@
 const joi = require("joi");
 
-const schemaRegisterAdmin = joi.object({
+const schemaRegisterSeller = joi.object({
     nome: joi.string().required().trim().messages({
         'any.required': "O campo nome é obrigatótio",
         'string.empty': "O campo nome é obrigatótio"
@@ -10,10 +10,11 @@ const schemaRegisterAdmin = joi.object({
         'string.empty': "O campo email é obrigatótio",
         'string.email': "O email deve ser um email valido"
     }),
-    senha: joi.string().min(6).required().trim().messages({
-        'any.required': "O campo senha é obrigatótio",
-        'string.empty': "O campo senha é obrigatótio",
-        "string.min": "O campo senha deve conter no minimo 6 caracteres"
+    cpf: joi.string().min(11).max(11).required().trim().messages({
+        'any.required': "O campo cpf é obrigatótio",
+        'string.empty': "O campo cpf é obrigatótio",
+        "string.min": "O campo cpf deve conter 11 dígitos",
+        "string.max": "O campo cpf deve conter 11 dígitos"
     })
 });
-module.exports = schemaRegisterAdmin;
+module.exports = { schemaRegisterSeller };
