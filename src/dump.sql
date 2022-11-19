@@ -26,6 +26,7 @@ CREATE TABLE
         ano VARCHAR(4) NOT NULL,
         placa VARCHAR(8),
         preco integer NOT NULL,
+        cor VARCHAR(50) NOT NULL,
         status BOOLEAN default(true)
     );
 
