@@ -46,6 +46,42 @@ async function update(id, data) {
     return [car];
 };
 
+
+async function findAll() {
+    const cars = await knex('carros')
+        .select(["id", "marca", "modelo", "ano", "placa", "preco", "cor"])
+        .where({ status: true })
+    return cars;
+};
+
+
+async function find(id) {
+    if (!Number(id)) throw errors(400, 'Informe código válido do carro');
+
+    const carExists = await knex('carros')
+        .select(["id", "marca", "modelo", "ano", "placa", "preco", "cor"])
+        .where({ id })
+        .andWhere({ status: true })
+        .first();
+    if (!carExists) throw errors(403, 'Carro não encontrado no sistema!');
+    return carExists;
+};
+
+async function remove(id) {
+    if (!Number(id)) throw errors(400, 'Informe código válido do carro');
+
+    const sellerExists = await knex('carros')
+        .where({ id })
+        .andWhere({ status: true })
+        .first();
+    if (!sellerExists) throw errors(403, 'Carro não encontrado no sistema!');
+
+    await knex("carros").update({ status: false }).where({ id })
+
+    return true;
+};
+
+
 module.exports = {
-    create, update
+    create, update, findAll, find, remove
 };

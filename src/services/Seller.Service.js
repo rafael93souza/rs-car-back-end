@@ -75,7 +75,6 @@ async function remove(id) {
     if (!Number(id)) throw errors(400, 'Informe código válido do vendedor');
 
     const sellerExists = await knex('vendedores')
-        .select(["id", "nome", "email", "cpf"])
         .where({ id })
         .andWhere({ status: true })
         .first();
