@@ -11,5 +11,8 @@ async function create(req, res) {
         return res.status(500).json({ message: 'Internal server Error!' });
     }
 }
+async function getAdmin(req, res) {
+    return res.status(200).json(req.admin);
+}
 
-module.exports = { create }
+module.exports = { create, getAdmin }
