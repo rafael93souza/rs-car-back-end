@@ -46,5 +46,17 @@ async function find(req, res) {
         return res.status(500).json({ message: 'Internal server Error!' });
     }
 }
+async function remove(req, res) {
+    const { id } = req.params;
+    try {
+        await SellerService.remove(id);
+        return res.status(204).send();
+    } catch (error) {
+        if (error.status) {
+            return res.status(error.status).json({ message: error.message });
+        }
+        return res.status(500).json({ message: 'Internal server Error!' });
+    }
+}
 
-module.exports = { create, update, findAll, find }
+module.exports = { create, update, findAll, find, remove }

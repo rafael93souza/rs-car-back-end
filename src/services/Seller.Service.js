@@ -70,6 +70,22 @@ async function find(id) {
     return sellerExists;
 };
 
+
+async function remove(id) {
+    if (!Number(id)) throw errors(400, 'Informe código válido do vendedor');
+
+    const sellerExists = await knex('vendedores')
+        .select(["id", "nome", "email", "cpf"])
+        .where({ id })
+        .andWhere({ status: true })
+        .first();
+    if (!sellerExists) throw errors(403, 'Vendedor não encontrado no sistema!');
+
+    await knex("vendedores").update({ status: false }).where({ id })
+
+    return true;
+};
+
 module.exports = {
-    create, update, findAll, find
+    create, update, findAll, find, remove
 };
