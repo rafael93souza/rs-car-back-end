@@ -15,5 +15,6 @@ route.post("/login", validationSchema(schemaLoginAdmin), Login.login);
 route.use(verifyToken);
 route.get("/admin", Admin.getAdmin)
 route.post("/vendedor", validationSchema(schemaRegisterSeller), Seller.create)
+route.put("/vendedor/:id", validationSchema(schemaRegisterSeller), Seller.update)
 
 module.exports = route;

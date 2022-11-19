@@ -11,5 +11,17 @@ async function create(req, res) {
         return res.status(500).json({ message: 'Internal server Error!' });
     }
 }
+async function update(req, res) {
+    const { id } = req.params;
+    try {
+        const seller = await SellerService.update(id, req.body);
+        return res.status(200).json(seller);
+    } catch (error) {
+        if (error.status) {
+            return res.status(error.status).json({ message: error.message });
+        }
+        return res.status(500).json({ message: 'Internal server Error!' });
+    }
+}
 
-module.exports = { create }
+module.exports = { create, update }
