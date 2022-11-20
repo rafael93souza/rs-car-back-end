@@ -31,4 +31,6 @@ route.get("/carro/:id", Cars.find);
 route.delete("/carro/:id", Cars.remove);
 
 route.post("/venda", validationSchema(schemaSale), Sale.create);
+route.put("/venda/:id", validationSchema(schemaSale), Sale.update);
+
 module.exports = route;

@@ -8,7 +8,20 @@ async function create(req, res) {
         if (error.status) {
             return res.status(error.status).json({ message: error.message });
         }
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: 'Internal server Error!' });
     }
 }
-module.exports = { create }
+
+async function update(req, res) {
+    const { id } = req.params;
+    try {
+        const sale = await SaleService.update(id, req.body);
+        return res.status(200).json(sale);
+    } catch (error) {
+        if (error.status) {
+            return res.status(error.status).json({ message: error.message });
+        }
+        return res.status(500).json({ message: 'Internal server Error!' });
+    }
+}
+module.exports = { create, update }
