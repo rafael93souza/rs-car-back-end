@@ -62,6 +62,26 @@ async function update(id, data) {
     return updateSale;
 };
 
+async function findAll() {
+    const sales = await knex('vendas')
+        .select(["id", "vendedor_id", "carro_id", "data", "valor"])
+        .where({ status: true });
+    return sales;
+};
+
+
+async function find(id) {
+    if (!Number(id)) throw errors(400, 'Informe código válido da venda');
+
+    const saleExists = await knex('vendas')
+        .select(["id", "vendedor_id", "carro_id", "data", "valor"])
+        .where({ id })
+        .andWhere({ status: true })
+        .first();
+    if (!saleExists) throw errors(403, 'Venda não encontrada no sistema!');
+    return saleExists;
+};
+
 module.exports = {
-    create, update
+    create, update, findAll, find
 };
