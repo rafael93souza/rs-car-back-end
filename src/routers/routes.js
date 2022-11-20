@@ -36,4 +36,6 @@ route.get("/venda", Sale.findAll);
 route.get("/venda/:id", Sale.find);
 route.delete("/venda/:id", Sale.remove);
 
+route.get("/grafico/soma", Sale.findSumAll);
+route.get("/grafico/soma/mensal", Sale.findMonthlySum);
 module.exports = route;

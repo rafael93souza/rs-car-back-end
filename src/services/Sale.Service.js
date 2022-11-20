@@ -1,5 +1,8 @@
 const knex = require('../connections/database');
 const errors = require('../utils/errorsBase');
+const sub = require('date-fns/sub');
+const add = require('date-fns/add');
+const format = require('date-fns/format');
 
 async function create(data) {
     const sellerExists = await knex("vendedores")
@@ -19,7 +22,7 @@ async function create(data) {
         .andWhere({ status: true })
         .first();
 
-    if (saleExists) throw errors(409, 'O carro informado já vendido!');
+    if (saleExists) throw errors(409, 'O carro informado já foi vendido!');
 
     const createdSale = await knex('vendas')
         .insert(data)
@@ -71,7 +74,6 @@ async function findAll() {
     return sales;
 };
 
-
 async function find(id) {
     if (!Number(id)) throw errors(400, 'Informe código válido da venda');
 
@@ -85,7 +87,6 @@ async function find(id) {
     if (!saleExists) throw errors(403, 'Venda não encontrada no sistema!');
     return saleExists;
 };
-
 
 async function remove(id) {
     if (!Number(id)) throw errors(400, 'Informe código válido da venda');
@@ -101,6 +102,62 @@ async function remove(id) {
     return true;
 };
 
+async function findSumAll() {
+    const sellers = await knex("vendedores")
+        .select("id", "nome")
+        .where({ status: true });
+
+    const sales = await knex('vendas as vn')
+        .where({ 'vn.status': true })
+        .sum("vn.valor as soma")
+        .groupBy("vn.vendedor_id")
+        .join("vendedores as vd", 'vd.id', "=", "vn.vendedor_id")
+        .groupBy("vd.id")
+        .select("vn.vendedor_id", "vd.nome")
+
+    sellers.map((seller) => {
+        const findSale = sales.find((sale) => sale.vendedor_id === seller.id)
+        if (!findSale) sales.push({ soma: 0, ...seller })
+    })
+    return sales;
+};
+
+async function findMonthlySum(qtd_months) {
+    const filterDate = qtd_months ? qtd_months : 6;
+    const days = new Date().getDate();
+    const hours = new Date().getHours();
+    const minutes = new Date().getMinutes();
+    const seconds = new Date().getSeconds();
+    const milliseconds = new Date().getMilliseconds();
+    const filter = sub(new Date(),
+        { months: filterDate, days: days - 1, hours, minutes, seconds, milliseconds });
+    const results = []
+
+    for (i = 1; i <= filterDate; i++) {
+        const months = add(filter, { months: i });
+        const months2 = add(months, { months: 1, seconds: -1 })
+        const sales = await knex('vendas')
+            .where({ 'status': true })
+            .andWhere("data", ">", months)
+            .andWhere("data", "<", months2)
+        let sumSales = 0
+        if (sales.length) {
+            sales.map((sale) => sumSales += sale.valor)
+        }
+        const formatterDate = Intl.DateTimeFormat('pt-BR', {
+            year: "numeric",
+            month: "long"
+        });
+        results.push({
+            mes: formatterDate.format(months),
+            soma_mensal: sumSales,
+            media_mensal: (sumSales / sales.length) || 0,
+            quantidade_vendas: sales.length,
+            periodo: { de: months, ate: months2 },
+        })
+    }
+    return results;
+};
 module.exports = {
-    create, update, findAll, find, remove
+    create, update, findAll, find, remove, findSumAll, findMonthlySum
 };
