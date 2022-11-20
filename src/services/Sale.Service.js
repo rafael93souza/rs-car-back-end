@@ -1,5 +1,7 @@
 const knex = require('../connections/database');
 const errors = require('../utils/errorsBase');
+const sub = require('date-fns/sub')
+const add = require('date-fns/add')
 
 async function create(data) {
     const sellerExists = await knex("vendedores")
@@ -19,7 +21,7 @@ async function create(data) {
         .andWhere({ status: true })
         .first();
 
-    if (saleExists) throw errors(409, 'O carro informado já vendido!');
+    if (saleExists) throw errors(409, 'O carro informado já foi vendido!');
 
     const createdSale = await knex('vendas')
         .insert(data)
@@ -101,6 +103,18 @@ async function remove(id) {
     return true;
 };
 
+
+async function findSumAll() {
+    const sales = await knex('vendas as vn')
+        .where({ 'vn.status': true })
+        .sum("vn.valor as soma")
+        .groupBy("vn.vendedor_id")
+        .join("vendedores as vd", 'vd.id', "=", "vn.vendedor_id")
+        .groupBy("vd.id")
+        .select("vn.vendedor_id", "vd.nome")
+    return sales;
+};
+
 module.exports = {
-    create, update, findAll, find, remove
+    create, update, findAll, find, remove, findSumAll
 };
