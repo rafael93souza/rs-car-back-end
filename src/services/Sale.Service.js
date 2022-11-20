@@ -63,9 +63,11 @@ async function update(id, data) {
 };
 
 async function findAll() {
-    const sales = await knex('vendas')
-        .select(["id", "vendedor_id", "carro_id", "data", "valor"])
-        .where({ status: true });
+    const sales = await knex('vendas as vn')
+        .join("vendedores as vd", 'vd.id', "=", "vn.vendedor_id")
+        .join("carros as cr", "cr.id", "=", "vn.carro_id")
+        .select("vn.id", "vn.vendedor_id", "vn.carro_id", "vn.data", "vn.valor", "vd.nome", "vd.cpf", "vd.email", "cr.marca", "cr.modelo", "cr.ano", "cr.placa", "cr.preco", "cr.cor")
+        .where({ 'vn.status': true });
     return sales;
 };
 
@@ -73,10 +75,12 @@ async function findAll() {
 async function find(id) {
     if (!Number(id)) throw errors(400, 'Informe código válido da venda');
 
-    const saleExists = await knex('vendas')
-        .select(["id", "vendedor_id", "carro_id", "data", "valor"])
-        .where({ id })
-        .andWhere({ status: true })
+    const saleExists = await knex('vendas as vn')
+        .join("vendedores as vd", 'vd.id', "=", "vn.vendedor_id")
+        .join("carros as cr", "cr.id", "=", "vn.carro_id")
+        .select("vn.id", "vn.vendedor_id", "vn.carro_id", "vn.data", "vn.valor", "vd.nome", "vd.cpf", "vd.email", "cr.marca", "cr.modelo", "cr.ano", "cr.placa", "cr.preco", "cr.cor")
+        .where({ 'vn.id': id })
+        .where({ 'vn.status': true })
         .first();
     if (!saleExists) throw errors(403, 'Venda não encontrada no sistema!');
     return saleExists;
