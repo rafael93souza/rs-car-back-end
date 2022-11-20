@@ -82,6 +82,21 @@ async function find(id) {
     return saleExists;
 };
 
+
+async function remove(id) {
+    if (!Number(id)) throw errors(400, 'Informe código válido da venda');
+
+    const saleExists = await knex('vendas')
+        .where({ id })
+        .andWhere({ status: true })
+        .first();
+    if (!saleExists) throw errors(403, 'Venda não encontrada no sistema!');
+
+    await knex("vendas").update({ status: false }).where({ id })
+
+    return true;
+};
+
 module.exports = {
-    create, update, findAll, find
+    create, update, findAll, find, remove
 };
