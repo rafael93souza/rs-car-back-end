@@ -75,4 +75,16 @@ async function findSumAll(req, res) {
     }
 }
 
-module.exports = { create, update, findAll, find, remove, findSumAll }
+async function findMonthlySum(req, res) {
+    const { meses } = req.query;
+    try {
+        const sales = await SaleService.findMonthlySum(meses);
+        return res.status(200).json(sales);
+    } catch (error) {
+        if (error.status) {
+            return res.status(error.status).json({ message: error.message });
+        }
+        return res.status(500).json({ message: error.message });
+    }
+}
+module.exports = { create, update, findAll, find, remove, findSumAll, findMonthlySum }
