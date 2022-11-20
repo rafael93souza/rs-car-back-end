@@ -4,12 +4,13 @@ const Admin = require("../controllers/Admin.controller");
 const Login = require("../controllers/Login.controller");
 const Seller = require("../controllers/Seller.controller");
 const Cars = require("../controllers/Cars.controller");
+const Sale = require("../controllers/Sale.controller");
 const validationSchema = require('../middlewares/validationSchema');
 const verifyToken = require('../middlewares/verifyToken');
 const { schemaRegisterAdmin, schemaLoginAdmin } = require('../schemas/schemaAdmin');
 const { schemaCar } = require('../schemas/schemaCar');
 const { schemaRegisterSeller } = require('../schemas/schemaSeller');
-
+const { schemaSale } = require('../schemas/schemaSale');
 
 route.post("/admin", validationSchema(schemaRegisterAdmin), Admin.create);
 route.post("/login", validationSchema(schemaLoginAdmin), Login.login);
@@ -29,4 +30,5 @@ route.get("/carro", Cars.findAll);
 route.get("/carro/:id", Cars.find);
 route.delete("/carro/:id", Cars.remove);
 
+route.post("/venda", validationSchema(schemaSale), Sale.create);
 module.exports = route;
