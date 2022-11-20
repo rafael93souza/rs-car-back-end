@@ -23,7 +23,6 @@ async function create(data) {
     return [car];
 };
 
-
 async function update(id, data) {
     const carExists = await knex('carros')
         .where({ id })
@@ -46,14 +45,20 @@ async function update(id, data) {
     return [car];
 };
 
-
 async function findAll() {
     const cars = await knex('carros')
         .select(["id", "marca", "modelo", "ano", "placa", "preco", "cor"])
         .where({ status: true })
-    return cars;
-};
 
+    const sales = await knex('vendas')
+        .where({ 'status': true });
+
+    sales.map((sale) => {
+        const findCar = cars.find(car => car.id === sale.carro_id)
+        findCar.vendido = true
+    })
+    return cars
+};
 
 async function find(id) {
     if (!Number(id)) throw errors(400, 'Informe código válido do carro');
@@ -64,6 +69,12 @@ async function find(id) {
         .andWhere({ status: true })
         .first();
     if (!carExists) throw errors(403, 'Carro não encontrado no sistema!');
+
+    const sale = await knex('vendas')
+        .where({ 'status': true })
+        .andWhere({ carro_id: carExists.id })
+        .first();
+    if (sale) carExists.vendido = true
     return carExists;
 };
 
@@ -80,7 +91,6 @@ async function remove(id) {
 
     return true;
 };
-
 
 module.exports = {
     create, update, findAll, find, remove
