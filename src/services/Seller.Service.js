@@ -54,6 +54,7 @@ async function findAll() {
     const sellers = await knex('vendedores')
         .select(["id", "nome", "email", "cpf"])
         .where({ status: true })
+        .orderBy("id", "desc")
     return sellers;
 };
 

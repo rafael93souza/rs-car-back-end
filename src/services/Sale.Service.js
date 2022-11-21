@@ -70,7 +70,8 @@ async function findAll() {
         .join("vendedores as vd", 'vd.id', "=", "vn.vendedor_id")
         .join("carros as cr", "cr.id", "=", "vn.carro_id")
         .select("vn.id", "vn.vendedor_id", "vn.carro_id", "vn.data", "vn.valor", "vd.nome", "vd.cpf", "vd.email", "cr.marca", "cr.modelo", "cr.ano", "cr.placa", "cr.preco", "cr.cor")
-        .where({ 'vn.status': true });
+        .where({ 'vn.status': true })
+        .orderBy("vn.id", "desc")
     return sales;
 };
 
@@ -114,6 +115,7 @@ async function findSumAll() {
         .join("vendedores as vd", 'vd.id', "=", "vn.vendedor_id")
         .groupBy("vd.id")
         .select("vn.vendedor_id", "vd.nome")
+        .orderBy("soma", "desc")
 
     sellers.map((seller) => {
         const findSale = sales.find((sale) => sale.vendedor_id === seller.id)

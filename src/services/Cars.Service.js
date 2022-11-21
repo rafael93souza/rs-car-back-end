@@ -49,6 +49,7 @@ async function findAll() {
     const cars = await knex('carros')
         .select(["id", "marca", "modelo", "ano", "placa", "preco", "cor"])
         .where({ status: true })
+        .orderBy("id", "desc")
 
     const sales = await knex('vendas')
         .where({ 'status': true });
@@ -81,12 +82,17 @@ async function find(id) {
 async function remove(id) {
     if (!Number(id)) throw errors(400, 'Informe código válido do carro');
 
-    const sellerExists = await knex('carros')
+    const carExists = await knex('carros')
         .where({ id })
         .andWhere({ status: true })
         .first();
-    if (!sellerExists) throw errors(403, 'Carro não encontrado no sistema!');
+    if (!carExists) throw errors(403, 'Carro não encontrado no sistema!');
 
+    const saleExists = await knex("vendas")
+        .where({ carro_id: id })
+        .andWhere({ status: true })
+        .first();
+    if (saleExists) throw errors(403, 'Carro não pode ser excluido sistema!');
     await knex("carros").update({ status: false }).where({ id })
 
     return true;
