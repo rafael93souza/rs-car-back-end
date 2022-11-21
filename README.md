@@ -4,6 +4,8 @@
 
 Aplicação com o objetivo de disponibilizar aos administradores de uma consessionária possa gerir e controlar o seu negócio. 
 
+- [video de apresentação](https://youtu.be/dL-XaH6k4Jk)
+
 ## Requisitos
 
 - NodeJs v16.15.1
@@ -111,7 +113,7 @@ Beekeeper Studio
 Ao gerar o banco de dados e popular ele, será criado um usuário administrador que tera os seguintes dados:
 
 - nome: Admin
-- email: admin@admin.com
+- email: admin@email.com
 - senha: 123456
 
 Apenas o usuário cadastrado no sistema conseguirá ter acesso as rotas protegidas.

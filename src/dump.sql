@@ -41,3 +41,12 @@ CREATE TABLE
         FOREIGN KEY (vendedor_id) REFERENCES vendedores (id),
         FOREIGN KEY (carro_id) REFERENCES carros (id)
     );
+
+
+    INSERT INTO
+    administrador(nome, email, senha)
+VALUES (
+        'Admin',
+        'admin@email.com',
+        '$2b$10$50fXnl20fd1wbXcOjGfqROixX6v6n21CzMocdeEKa9ZEfXHigne3W'
+    );
